@@ -39,13 +39,14 @@
     <main class="container">
       <div class="flex">
         <canvas width="24" height="24"></canvas>
+        <img id="output" />
         <span>
           <label for="width" class="number">
-            Final Width
+            Final Pixel Width
             <input type="number" id="width" name="width" value="24" />
           </label>
           <label for="height" class="number">
-            Final Height
+            Final Pixel Height
             <input type="number" id="height" name="height" value="24" />
           </label>
         </span>
@@ -58,13 +59,16 @@
 
     <main class="container">
       <span>
-        <textarea
-          readonly
-          name="output"
-          id="base64"
-          cols="30"
-          rows="10"
-        ></textarea>
+        <label for="base64">
+          Base64<span id="count"></span>
+          <textarea
+            readonly
+            id="base64"
+            name="base64"
+            cols="30"
+            rows="10"
+          ></textarea>
+        </label>
 
         <button>
           <span class="help">Copied!</span>

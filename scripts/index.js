@@ -6,6 +6,8 @@ const heightEle = document.querySelector("input#height");
 const textArea = document.querySelector("textarea");
 const button = document.querySelector("button");
 const copiedEle = document.querySelector("span.help");
+const count = document.querySelector("#count");
+const img = document.querySelector("img");
 
 let width = widthEle.value;
 let height = heightEle.value;
@@ -42,6 +44,7 @@ button.addEventListener("click", () => {
 function drawToCanvas() {
   if (input.value == "") {
     textArea.value = "";
+    count.innerText = "";
     return;
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -55,7 +58,10 @@ function drawToCanvas() {
 }
 
 function canvasToBase64() {
-  textArea.value = canvas.toDataURL();
+  const dataUrl = canvas.toDataURL();
+  textArea.value = dataUrl;
+  img.src = dataUrl;
+  count.innerText = ` (${dataUrl.length} characters at ${width}px by ${height}px)`;
 }
 
 if (!window.isSecureContext) {

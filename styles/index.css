@@ -32,7 +32,7 @@ body {
   height: 100svh;
 }
 main.container {
-  padding: 1rem 0;
+  padding: calc(var(--spacing));
 }
 div {
   align-items: center;
@@ -41,6 +41,9 @@ div > * {
   margin: 0 1rem;
 }
 canvas {
+  display: none;
+}
+img {
   border: solid 1px var(--secondary);
   background-color: var(--primary-focus);
   width: 200px;
@@ -52,8 +55,12 @@ div > span {
   flex-direction: column;
 }
 
+label {
+  margin-top: calc(var(--spacing) * 0.25);
+}
+
 label.number {
-  width: 6rem;
+  width: 15ch;
 }
 label.number:last-child > input {
   margin-bottom: 0;
@@ -64,6 +71,11 @@ main > span {
 }
 textarea {
   resize: none;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding-right: 17px;
 }
 button {
   position: absolute;
@@ -71,8 +83,8 @@ button {
   height: max-content;
   background-color: var(--primary-focus);
   padding: 5px;
-  top: -3rem;
-  right: 1rem;
+  bottom: 1.5rem;
+  right: 2rem;
   line-height: 1rem;
   padding-top: 0.4rem;
 }
