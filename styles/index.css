@@ -53,6 +53,8 @@ img {
 div > span {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  height: 250px;
 }
 
 label {
@@ -101,6 +103,9 @@ button {
   position: fixed;
   bottom: 1rem;
   right: 1rem;
+}
+.sass span {
+  height: 40px;
 }
 .sass:hover div {
   opacity: 1;

@@ -8,9 +8,17 @@ const button = document.querySelector("button");
 const copiedEle = document.querySelector("span.help");
 const count = document.querySelector("#count");
 const img = document.querySelector("img");
+const bgColorEle = document.querySelector("input#bgcolor");
+const bgRangeEle = document.querySelector("input#bgrange");
+const iconColorEle = document.querySelector("input#iconcolor");
+const iconRangeEle = document.querySelector("input#iconrange");
 
 let width = widthEle.value;
 let height = heightEle.value;
+
+if (!window.isSecureContext) {
+  button.style.display = "none";
+}
 
 input.addEventListener("input", () => {
   drawToCanvas();
@@ -25,6 +33,21 @@ widthEle.addEventListener("input", () => {
 heightEle.addEventListener("input", () => {
   height = heightEle.value;
   canvas.height = height;
+  drawToCanvas();
+});
+
+bgColorEle.addEventListener("input", () => {
+  drawToCanvas();
+});
+bgRangeEle.addEventListener("input", () => {
+  bgColorEle.style.opacity = bgRangeEle.value / 100;
+  drawToCanvas();
+});
+iconColorEle.addEventListener("input", () => {
+  drawToCanvas();
+});
+iconRangeEle.addEventListener("input", () => {
+  iconColorEle.style.opacity = iconRangeEle.value / 100;
   drawToCanvas();
 });
 
@@ -47,11 +70,18 @@ function drawToCanvas() {
     count.innerText = "";
     return;
   }
+
+  const color = getColor(iconColorEle, iconRangeEle);
+  const backColor = getColor(bgColorEle, bgRangeEle);
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = backColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
   ctx.font = `normal normal normal ${
     width > height ? width : height
   }px "Material Icons"`;
-  ctx.fillStyle = "#bbc6ce";
+  ctx.fillStyle = color;
   ctx.textAlign = "center";
   ctx.fillText(input.value, canvas.width / 2, canvas.height);
   canvasToBase64();
@@ -64,6 +94,26 @@ function canvasToBase64() {
   count.innerText = ` (${dataUrl.length} characters at ${width}px by ${height}px)`;
 }
 
-if (!window.isSecureContext) {
-  button.style.display = "none";
+function getColor(color, range) {
+  const rgb = hex2Rgb(color.value);
+  const opacity = range.value / 100;
+  return `rgba(${rgb.r},${rgb.g},${rgb.b},${opacity})`;
+}
+
+//https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+function hex2Rgb(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : null;
 }
