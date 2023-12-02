@@ -21,6 +21,7 @@ if (!window.isSecureContext) {
 }
 
 input.addEventListener("input", () => {
+  input.value = input.value.toLowerCase().replaceAll(" ", "_");
   drawToCanvas();
 });
 
