@@ -33,7 +33,7 @@
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"
     />
     <link rel="stylesheet" href="./styles/index.css" />
-    <script src="./scripts/index.js" defer></script>
+    <script type="module" src="./scripts/index.js" defer></script>
   </head>
   <body class="flex">
     <main class="container">
@@ -96,7 +96,13 @@
       </div>
       <label for="input">
         Enter Icon Name
-        <input type="text" id="input" name="input" placeholder="search" />
+        <input
+          list="icons"
+          type="text"
+          id="input"
+          name="input"
+          placeholder="search"
+        />
       </label>
     </main>
 

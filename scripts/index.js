@@ -1,3 +1,5 @@
+import { allIcons } from "./icons.js";
+
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const input = document.querySelector("input#input");
@@ -15,6 +17,15 @@ const iconRangeEle = document.querySelector("input#iconrange");
 
 let width = widthEle.value;
 let height = heightEle.value;
+
+let datalist = `<datalist id="icons">`;
+for (const x of allIcons()) {
+  datalist += `<option value="${x}"></option>`;
+}
+datalist += "</datalist>";
+const datalistEle = document.createElement("datalist");
+datalistEle.innerHTML = datalist;
+document.querySelector('label[for="input"]').appendChild(datalistEle);
 
 if (!window.isSecureContext) {
   button.style.display = "none";
