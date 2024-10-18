@@ -81,6 +81,7 @@ label.number:last-child > input {
 
 main > span {
   position: relative;
+  display: block;
 }
 textarea {
   resize: none;
