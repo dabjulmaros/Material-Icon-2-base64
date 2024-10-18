@@ -14,6 +14,8 @@ const bgColorEle = document.querySelector("input#bgcolor");
 const bgRangeEle = document.querySelector("input#bgrange");
 const iconColorEle = document.querySelector("input#iconcolor");
 const iconRangeEle = document.querySelector("input#iconrange");
+const bgRadRangeEle = document.querySelector("input#bgRadRange");
+const iconStyle = document.querySelector('select#iconStyle');
 
 let width = widthEle.value;
 let height = heightEle.value;
@@ -62,6 +64,12 @@ iconRangeEle.addEventListener("input", () => {
   iconColorEle.style.opacity = iconRangeEle.value / 100;
   drawToCanvas();
 });
+bgRadRangeEle.addEventListener('input', () => {
+  drawToCanvas()
+})
+iconStyle.addEventListener('change', () => {
+  drawToCanvas()
+})
 
 button.addEventListener("click", () => {
   if (textArea.value == "") return;
@@ -88,14 +96,16 @@ function drawToCanvas() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = backColor;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const radius = Math.floor((((canvas.width > canvas.height ? canvas.width : canvas.height) / 2) / 100) * bgRadRangeEle.value);
+  ctx.roundRect(0, 0, canvas.width, canvas.height, [radius]);
+  ctx.fill();
 
-  ctx.font = `normal normal normal ${
-    width > height ? width : height
-  }px "Material Icons"`;
-  ctx.fillStyle = color;
+  ctx.font = `normal normal normal ${(width > height ? width : height) * .8
+    }px "Material Symbols ${iconStyle.value}"`;
+  ctx.fillStyle = `color`;
   ctx.textAlign = "center";
-  ctx.fillText(input.value, canvas.width / 2, canvas.height);
+  ctx.textBaseline = "middle";
+  ctx.fillText(input.value, canvas.width / 2, canvas.height / 1.8);
   canvasToBase64();
 }
 
@@ -123,9 +133,9 @@ function hex2Rgb(hex) {
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16),
+    }
     : null;
 }
