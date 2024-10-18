@@ -65,10 +65,10 @@ iconRangeEle.addEventListener("input", () => {
   drawToCanvas();
 });
 bgRadRangeEle.addEventListener('input', () => {
-  drawToCanvas()
+  drawToCanvas();
 })
 iconStyle.addEventListener('change', () => {
-  drawToCanvas()
+  drawToCanvas();
 })
 
 button.addEventListener("click", () => {
@@ -94,15 +94,23 @@ function drawToCanvas() {
   const color = getColor(iconColorEle, iconRangeEle);
   const backColor = getColor(bgColorEle, bgRangeEle);
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Round rect seems to persist weirdly 
+  // sort of like an after image even after clearRect
+  // resetting the canvas removes the after image
+  canvas.height = height;
+  // ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   ctx.fillStyle = backColor;
-  const radius = Math.floor((((canvas.width > canvas.height ? canvas.width : canvas.height) / 2) / 100) * bgRadRangeEle.value);
+  const radius = Math.floor(((canvas.width / 2) / 100) * bgRadRangeEle.value);
+
   ctx.roundRect(0, 0, canvas.width, canvas.height, [radius]);
   ctx.fill();
+  // ctx.stroke();
 
   ctx.font = `normal normal normal ${(width > height ? width : height) * .8
     }px "Material Symbols ${iconStyle.value}"`;
-  ctx.fillStyle = `color`;
+  ctx.fillStyle = color;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(input.value, canvas.width / 2, canvas.height / 1.8);
