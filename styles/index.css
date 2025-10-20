@@ -7,9 +7,6 @@ body {
   flex-direction: column;
   height: 100svh;
 }
-main.container {
-  padding: calc(var(--spacing));
-}
 div {
   align-items: center;
 }
@@ -20,8 +17,8 @@ canvas {
   display: none;
 }
 img {
-  border: solid 1px var(--secondary);
-  background-color: var(--primary-focus);
+  border: solid 1px var(--pico-primary-border);
+  /* background-color: var(--pico-primary-border); */
   width: 200px;
   height: 200px;
 }
@@ -31,10 +28,6 @@ div > span {
   flex-direction: column;
   justify-content: center;
   height: 300px;
-}
-
-label {
-  margin-top: calc(var(--spacing) * 0.25);
 }
 
 label.number,
@@ -61,7 +54,6 @@ button {
   position: absolute;
   width: max-content;
   height: max-content;
-  background-color: var(--primary-focus);
   padding: 5px;
   bottom: 1.5rem;
   right: 2rem;

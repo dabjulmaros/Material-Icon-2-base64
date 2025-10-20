@@ -99,7 +99,7 @@ function drawToCanvas() {
   ctx.fillStyle = color;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(input.value, canvas.width / 2, canvas.height / 1.8);
+  ctx.fillText(input.value, canvas.width / 2, canvas.height / 2);
   canvasToBase64();
 }
 
