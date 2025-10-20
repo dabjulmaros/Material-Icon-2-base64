@@ -1,12 +1,10 @@
-import { allIcons } from "./icons.js";
-
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const input = document.querySelector("input#input");
 const widthEle = document.querySelector("input#width");
 const heightEle = document.querySelector("input#height");
 const textArea = document.querySelector("textarea");
-const button = document.querySelector("button");
+const button = document.querySelector("#copy");
 const copiedEle = document.querySelector("span.help");
 const count = document.querySelector("#count");
 const img = document.querySelector("img");
@@ -19,15 +17,6 @@ const iconStyle = document.querySelector('select#iconStyle');
 
 let width = widthEle.value;
 let height = heightEle.value;
-
-let datalist = `<datalist id="icons">`;
-for (const x of allIcons()) {
-  datalist += `<option value="${x}"></option>`;
-}
-datalist += "</datalist>";
-const datalistEle = document.createElement("datalist");
-datalistEle.innerHTML = datalist;
-document.querySelector('label[for="input"]').appendChild(datalistEle);
 
 if (!window.isSecureContext) {
   button.style.display = "none";
@@ -54,14 +43,14 @@ bgColorEle.addEventListener("input", () => {
   drawToCanvas();
 });
 bgRangeEle.addEventListener("input", () => {
-  bgColorEle.style.opacity = bgRangeEle.value / 100;
+  // bgColorEle.style.opacity = bgRangeEle.value / 100;
   drawToCanvas();
 });
 iconColorEle.addEventListener("input", () => {
   drawToCanvas();
 });
 iconRangeEle.addEventListener("input", () => {
-  iconColorEle.style.opacity = iconRangeEle.value / 100;
+  // iconColorEle.style.opacity = iconRangeEle.value / 100;
   drawToCanvas();
 });
 bgRadRangeEle.addEventListener('input', () => {
@@ -76,11 +65,8 @@ button.addEventListener("click", () => {
   navigator.clipboard.writeText(textArea.value);
   copiedEle.style.display = "inline-block";
   copiedEle.style.animation = "3s 1 helpRoll";
-  console.log(copiedEle.style.display);
   copiedEle.addEventListener("animationend", (e) => {
-    console.log(e);
     copiedEle.style.display = "none";
-    console.log(copiedEle.style.display);
   });
 });
 
@@ -109,7 +95,7 @@ function drawToCanvas() {
   // ctx.stroke();
 
   ctx.font = `normal normal normal ${(width > height ? width : height) * .8
-    }px "Material Symbols ${iconStyle.value}"`;
+    }px "Material Icons${iconStyle.value == "Filled" ? "" : " " + iconStyle.value}"`;
   ctx.fillStyle = color;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -121,7 +107,18 @@ function canvasToBase64() {
   const dataUrl = canvas.toDataURL();
   textArea.value = dataUrl;
   img.src = dataUrl;
-  count.innerText = ` (${dataUrl.length} characters at ${width}px by ${height}px)`;
+  count.innerText = ` (${dataUrl.length} characters or ${shortNum(dataUrl.length)} at ${width}px by ${height}px)`;
+}
+
+function shortNum(num) {
+  if (num < 1024) {
+    return num + " bytes"
+  }
+  else if (num < 1048576) {
+    return (num / 1024).toFixed(2) + " kb";
+  }
+  else
+    return (num / 1048576).toFixed(2) + " mb";
 }
 
 function getColor(color, range) {
@@ -147,3 +144,146 @@ function hex2Rgb(hex) {
     }
     : null;
 }
+
+
+const radioSet = document.querySelector('#modal fieldset');
+const pickerArea = document.querySelector('#modal #pickerArea');
+const iconSearch = document.querySelector('#modal #iconSearch');
+let lastStyle = "";
+let filter = "";
+
+document.querySelector('#closeModal').addEventListener('click', () => toggleModal());
+
+input.addEventListener('click', () => toggleModal());
+
+iconSearch.addEventListener('input', e => {
+  filter = iconSearch.value;
+  buildIcons();
+})
+radioSet.addEventListener('click', e => {
+  if (e.target.value) {
+    lastStyle = e.target.value;
+    buildIcons();
+  }
+})
+
+function makeIcons() {
+  const currentFont = iconStyle.value.toLowerCase();
+
+  radioSet.querySelector(`[value="${currentFont}"]`).checked = true;
+  if (currentFont != lastStyle) {
+    lastStyle = currentFont;
+    buildIcons();
+  }
+}
+
+function buildIcons() {
+  pickerArea.innerHTML = "";
+
+  for (const icon in allIcons) {
+    if (icon.includes(filter)) {
+      if (allIcons[icon].includes(lastStyle)) {
+        const div = document.createElement('div');
+        const iconSpan = document.createElement('span');
+        const textSpan = document.createElement('span');
+        iconSpan.innerText = textSpan.innerText = icon;
+        iconSpan.classList.add(`material-icons${["round", "outlined", "sharp"].includes(lastStyle) ? "-" + lastStyle : ""}`)
+        iconSpan.classList.add(`icon`)
+        textSpan.classList.add(`name`)
+        div.appendChild(iconSpan);
+        div.appendChild(textSpan);
+        div.addEventListener('click', e => {
+          event.stopPropagation();
+          input.value = icon;
+          iconStyle.value = lastStyle[0].toUpperCase() + lastStyle.substring(1);
+          drawToCanvas();
+          toggleModal();
+        })
+        div.title = icon;
+        pickerArea.appendChild(div);
+      }
+    }
+  }
+  if (pickerArea.innerHTML == "") {
+    pickerArea.innerHTML = `<span class='notFound'><h3>(T_T)</h3><span>Couldn't Find "${filter}"</span></span>`
+  }
+}
+
+
+/*
+ * Modal
+ *
+ * Pico.css - https://picocss.com
+ * Copyright 2019-2024 - Licensed under MIT
+ */
+
+// Config
+const isOpenClass = "modal-is-open";
+const openingClass = "modal-is-opening";
+const closingClass = "modal-is-closing";
+const scrollbarWidthCssVar = "--pico-scrollbar-width";
+const animationDuration = 400; // ms
+let visibleModal = null;
+
+
+// Toggle modal
+const toggleModal = () => {
+  const modal = document.getElementById("modal");
+  if (!modal) return;
+  modal && (modal.open ? closeModal(modal) : openModal(modal));
+};
+
+// Open modal
+const openModal = (modal) => {
+  const { documentElement: html } = document;
+  const scrollbarWidth = getScrollbarWidth();
+  if (scrollbarWidth) {
+    html.style.setProperty(scrollbarWidthCssVar, `${scrollbarWidth} px`);
+  }
+  html.classList.add(isOpenClass, openingClass);
+  setTimeout(() => {
+    visibleModal = modal;
+    html.classList.remove(openingClass);
+  }, animationDuration);
+  modal.showModal();
+  makeIcons();
+};
+
+// Close modal
+const closeModal = (modal) => {
+  visibleModal = null;
+  const { documentElement: html } = document;
+  html.classList.add(closingClass);
+  setTimeout(() => {
+    html.classList.remove(closingClass, isOpenClass);
+    html.style.removeProperty(scrollbarWidthCssVar);
+    modal.close();
+  }, animationDuration);
+};
+
+// Close with a click outside
+document.addEventListener("click", (event) => {
+  if (visibleModal === null) return;
+  const modalContent = visibleModal.querySelector("article");
+  const isClickInside = modalContent.contains(event.target);
+  !isClickInside && closeModal(visibleModal);
+});
+
+// Close with Esc key
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && visibleModal) {
+    closeModal(visibleModal);
+  }
+});
+
+// Get scrollbar width
+const getScrollbarWidth = () => {
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+  return scrollbarWidth;
+};
+
+// Is scrollbar visible
+const isScrollbarVisible = () => {
+  return document.body.scrollHeight > screen.height;
+};
+
